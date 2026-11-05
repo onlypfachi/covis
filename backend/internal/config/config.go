@@ -21,7 +21,7 @@ type Config struct {
 func Load() (Config, error) {
 	c := Config{
 		DatabaseURL:    os.Getenv("DATABASE_URL"),
-		RedisAddr:      envOr("REDIS_ADDR", "localhost:6381"),
+		RedisAddr:      envOr("REDIS_ADDR", "localhost:6380"),
 		DataDir:        envOr("DATA_DIR", "./data"),
 		APIAddr:        envOr("API_ADDR", ":8787"),
 		AgentWorkerURL: envOr("AGENT_WORKER_URL", "http://localhost:8790"),

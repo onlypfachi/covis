@@ -27,7 +27,7 @@ import (
 // the upstream repo is a real git remote that branches are pushed to. Only the
 // agent, the test sandbox and the GitHub API are stubbed. Set TEST_DATABASE_URL to run:
 //
-//	TEST_DATABASE_URL=postgres://covis:covis@localhost:5435/covis_test?sslmode=disable go test ./internal/app
+//	TEST_DATABASE_URL=postgres://covis:covis@localhost:5434/covis_test?sslmode=disable go test ./internal/app
 
 // inlineQueue runs tasks synchronously so a test can follow the whole flow.
 type inlineQueue struct{ svc *Service }
