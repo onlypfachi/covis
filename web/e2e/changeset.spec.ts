@@ -12,23 +12,20 @@ test("connect, explore, propose, review, approve into a pull request, then mirro
   await page.getByRole("button", { name: "Connect" }).click();
   await expect(page).toHaveURL(/\/repos\/\d+$/);
   const canvas = page.getByLabel("Architecture canvas");
-  const serviceFile = canvas.locator(".gnode", { hasText: "payment.service.ts" }).first();
+  const serviceFile = canvas.locator(".fgroup", { hasText: "payment.service.ts" });
   await expect(serviceFile).toBeVisible({ timeout: 45_000 });
   const baseSha = (await page.locator(".side .mono").first().textContent())!.match(/@([0-9a-f]{8})/)![1];
 
-  // Expand a file into its symbols, then inspect the class.
-  await serviceFile.dblclick();
-  const serviceClass = canvas.locator(".gnode", { hasText: "PaymentService" }).filter({ hasText: "class" });
-  await expect(serviceClass).toBeVisible();
-  await serviceClass.click();
+  // Functions sit inside their file's box. Inspect the file by its header.
+  await expect(canvas.locator(".gnode", { hasText: "PaymentService.charge" })).toBeVisible();
+  await serviceFile.locator(".head").click();
   const inspector = page.locator(".inspector");
   await expect(inspector.getByText("Source at this commit")).toBeVisible();
   await expect(inspector.locator("pre.source")).toContainText("class PaymentService");
-  await expect(inspector.getByText("implements (1)")).toBeVisible();
 
-  // Propose a change against the selected class. The graph is not edited.
+  // Propose a change against the selected file. The graph is not edited.
   await page.getByRole("button", { name: "Propose change…" }).click();
-  await expect(page.getByLabel("Selected components")).toContainText("PaymentService");
+  await expect(page.getByLabel("Selected components")).toContainText("payment.service.ts");
   await page.getByLabel("What should change?").fill("Add a refund method to PaymentService");
   await page.getByRole("button", { name: "Create change set" }).click();
   await expect(page).toHaveURL(/\/changesets\/\d+$/);
