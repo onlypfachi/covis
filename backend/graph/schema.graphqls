@@ -1,0 +1,166 @@
+# The git repository is the source of truth. Graph types describe a read-only
+# mirror of one commit (a Snapshot). Change sets record intended edits and never
+# modify the graph. An approved change set becomes a GitHub pull request; the
+# graph changes only when a merged commit is re-indexed.
+
+scalar Time
+scalar JSON
+
+type Query {
+  health: String!
+  repositories: [Repository!]!
+  repository(id: ID!): Repository
+  snapshot(id: ID!): Snapshot
+  graph(snapshotId: ID!, filter: GraphFilter): GraphSlice!
+  node(snapshotId: ID!, key: String!): GraphNode
+  changeSet(id: ID!): ChangeSet
+}
+
+type Mutation {
+  connectRepository(cloneUrl: String!): Repository!
+  indexRepository(id: ID!): Repository!
+  setTestCommand(id: ID!, command: String!): Repository!
+  "Pin hand-placed node positions. Positions are visual only, never code semantics."
+  saveLayout(repositoryId: ID!, positions: [PositionInput!]!): Boolean!
+  clearLayout(repositoryId: ID!): Boolean!
+
+  createChangeSet(input: CreateChangeSetInput!): ChangeSet!
+  runChangeSet(id: ID!): ChangeSet!
+  cancelChangeSet(id: ID!): ChangeSet!
+  "Explicit human approval of the exact diff identified by diffHash. Commits it on the change set branch, pushes the branch and opens a pull request. Never merges."
+  approveChangeSet(id: ID!, diffHash: String!): ChangeSet!
+  "Retry pushing the branch and opening the pull request after PR_FAILED."
+  retryPullRequest(id: ID!): ChangeSet!
+  "Read the pull request's state from GitHub; a merged pull request re-indexes the merge commit."
+  syncPullRequest(id: ID!): ChangeSet!
+  rejectChangeSet(id: ID!, reason: String): ChangeSet!
+  reviseChangeSet(id: ID!): ChangeSet!
+}
+
+type Repository {
+  id: ID!
+  name: String!
+  cloneUrl: String!
+  defaultBranch: String!
+  testCommand: String!
+  createdAt: Time!
+  "Most recent snapshot, whatever its status."
+  latestSnapshot: Snapshot
+  "Newest snapshot that finished indexing; what the canvas shows."
+  currentSnapshot: Snapshot
+  snapshots: [Snapshot!]!
+  layout: [Position!]!
+  changeSets: [ChangeSet!]!
+}
+
+type Snapshot {
+  id: ID!
+  commitSha: String!
+  status: String!
+  error: String!
+  createdAt: Time!
+}
+
+input GraphFilter {
+  kinds: [String!]
+  pathPrefix: String
+  "Only direct children of this node. Use \"repository:\" for the root."
+  parentKey: String
+  keys: [String!]
+  search: String
+  limit: Int
+}
+
+type GraphSlice {
+  nodes: [GraphNode!]!
+  "Non-containment edges touching any returned node."
+  edges: [GraphEdge!]!
+  truncated: Boolean!
+}
+
+type GraphNode {
+  id: ID!
+  key: String!
+  kind: String!
+  name: String!
+  qualifiedName: String!
+  filePath: String!
+  startLine: Int!
+  endLine: Int!
+  parentKey: String!
+  meta: JSON!
+  "Source read from git at the snapshot commit."
+  source: String!
+  incoming: [GraphEdge!]!
+  outgoing: [GraphEdge!]!
+}
+
+type GraphEdge {
+  id: ID!
+  sourceKey: String!
+  targetKey: String!
+  kind: String!
+  filePath: String!
+  line: Int!
+  inferred: Boolean!
+}
+
+type Position {
+  key: String!
+  x: Float!
+  y: Float!
+}
+
+input PositionInput {
+  key: String!
+  x: Float!
+  y: Float!
+}
+
+input CreateChangeSetInput {
+  repositoryId: ID!
+  request: String!
+  acceptanceCriteria: String
+  selectedKeys: [String!]
+}
+
+type ChangeSet {
+  id: ID!
+  repositoryId: ID!
+  baseCommitSha: String!
+  requestText: String!
+  acceptanceCriteria: String!
+  selectedKeys: [String!]!
+  status: String!
+  branchName: String!
+  "Commit on the change set branch that the pull request proposes."
+  resultCommitSha: String!
+  prNumber: Int
+  prUrl: String!
+  revisionOf: ID
+  createdAt: Time!
+  updatedAt: Time!
+  events(after: ID): [ChangeSetEvent!]!
+  latestExecution: Execution
+  executions: [Execution!]!
+}
+
+type ChangeSetEvent {
+  id: ID!
+  type: String!
+  payload: JSON!
+  createdAt: Time!
+}
+
+type Execution {
+  id: ID!
+  attempt: Int!
+  status: String!
+  startedAt: Time!
+  finishedAt: Time
+  diff: String!
+  diffHash: String!
+  testExitCode: Int
+  testOutput: String!
+  error: String!
+}

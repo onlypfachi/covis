@@ -1,0 +1,58 @@
+schema:
+  - graph/*.graphqls
+exec:
+  filename: graph/generated.go
+  package: graph
+model:
+  filename: graph/model/models_gen.go
+  package: model
+resolver:
+  layout: follow-schema
+  dir: graph
+  package: graph
+  filename_template: "{name}.resolvers.go"
+autobind:
+  - github.com/n0/covis/backend/internal/graphstore
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.IntID
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+  JSON:
+    model:
+      - github.com/99designs/gqlgen/graphql.Map
+  Repository:
+    model: github.com/n0/covis/backend/internal/graphstore.Repository
+    fields:
+      latestSnapshot: { resolver: true }
+      currentSnapshot: { resolver: true }
+      snapshots: { resolver: true }
+      layout: { resolver: true }
+      changeSets: { resolver: true }
+  Snapshot:
+    model: github.com/n0/covis/backend/internal/graphstore.Snapshot
+  GraphNode:
+    model: github.com/n0/covis/backend/internal/graphstore.Node
+    fields:
+      source: { resolver: true }
+      incoming: { resolver: true }
+      outgoing: { resolver: true }
+  GraphEdge:
+    model: github.com/n0/covis/backend/internal/graphstore.Edge
+  Position:
+    model: github.com/n0/covis/backend/internal/graphstore.Position
+  ChangeSet:
+    model: github.com/n0/covis/backend/internal/changeset.ChangeSet
+    fields:
+      selectedKeys: { fieldName: SelectedKeys }
+      prNumber: { fieldName: PRNumber }
+      prUrl: { fieldName: PRURL }
+      events: { resolver: true }
+      latestExecution: { resolver: true }
+      executions: { resolver: true }
+  ChangeSetEvent:
+    model: github.com/n0/covis/backend/internal/changeset.Event
+  Execution:
+    model: github.com/n0/covis/backend/internal/changeset.Execution

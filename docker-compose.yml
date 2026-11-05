@@ -1,0 +1,15 @@
+name: covis
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: covis
+      POSTGRES_PASSWORD: covis
+      POSTGRES_DB: covis
+    ports: ["127.0.0.1:5435:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  redis:
+    image: redis:7
+    ports: ["127.0.0.1:6381:6379"]
+volumes:
+  pgdata:

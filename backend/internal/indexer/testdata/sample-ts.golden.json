@@ -1,0 +1,857 @@
+{
+  "Nodes": [
+    {
+      "key": "class:src/lib/base-gateway.ts#BaseGateway",
+      "kind": "class",
+      "name": "BaseGateway",
+      "qualifiedName": "BaseGateway",
+      "filePath": "src/lib/base-gateway.ts",
+      "startLine": 1,
+      "endLine": 5,
+      "parentKey": "file:src/lib/base-gateway.ts"
+    },
+    {
+      "key": "class:src/payments/payment.controller.ts#PaymentController",
+      "kind": "class",
+      "name": "PaymentController",
+      "qualifiedName": "PaymentController",
+      "filePath": "src/payments/payment.controller.ts",
+      "startLine": 4,
+      "endLine": 11,
+      "parentKey": "file:src/payments/payment.controller.ts"
+    },
+    {
+      "key": "class:src/payments/payment.service.ts#PaymentService",
+      "kind": "class",
+      "name": "PaymentService",
+      "qualifiedName": "PaymentService",
+      "filePath": "src/payments/payment.service.ts",
+      "startLine": 4,
+      "endLine": 23,
+      "parentKey": "file:src/payments/payment.service.ts"
+    },
+    {
+      "key": "class:src/payments/stripe.gateway.ts#StripeGateway",
+      "kind": "class",
+      "name": "StripeGateway",
+      "qualifiedName": "StripeGateway",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "startLine": 9,
+      "endLine": 16,
+      "parentKey": "file:src/payments/stripe.gateway.ts"
+    },
+    {
+      "key": "directory:src",
+      "kind": "directory",
+      "name": "src",
+      "qualifiedName": "src",
+      "filePath": "src",
+      "parentKey": "repository:"
+    },
+    {
+      "key": "directory:src/http",
+      "kind": "directory",
+      "name": "http",
+      "qualifiedName": "src/http",
+      "filePath": "src/http",
+      "parentKey": "directory:src"
+    },
+    {
+      "key": "directory:src/lib",
+      "kind": "directory",
+      "name": "lib",
+      "qualifiedName": "src/lib",
+      "filePath": "src/lib",
+      "parentKey": "directory:src"
+    },
+    {
+      "key": "directory:src/payments",
+      "kind": "directory",
+      "name": "payments",
+      "qualifiedName": "src/payments",
+      "filePath": "src/payments",
+      "parentKey": "directory:src"
+    },
+    {
+      "key": "file:src/http/server.js",
+      "kind": "file",
+      "name": "server.js",
+      "qualifiedName": "src/http/server.js",
+      "filePath": "src/http/server.js",
+      "parentKey": "directory:src/http"
+    },
+    {
+      "key": "file:src/http/types.ts",
+      "kind": "file",
+      "name": "types.ts",
+      "qualifiedName": "src/http/types.ts",
+      "filePath": "src/http/types.ts",
+      "parentKey": "directory:src/http"
+    },
+    {
+      "key": "file:src/lib/base-gateway.ts",
+      "kind": "file",
+      "name": "base-gateway.ts",
+      "qualifiedName": "src/lib/base-gateway.ts",
+      "filePath": "src/lib/base-gateway.ts",
+      "parentKey": "directory:src/lib"
+    },
+    {
+      "key": "file:src/main.ts",
+      "kind": "file",
+      "name": "main.ts",
+      "qualifiedName": "src/main.ts",
+      "filePath": "src/main.ts",
+      "parentKey": "directory:src"
+    },
+    {
+      "key": "file:src/payments/index.ts",
+      "kind": "file",
+      "name": "index.ts",
+      "qualifiedName": "src/payments/index.ts",
+      "filePath": "src/payments/index.ts",
+      "parentKey": "directory:src/payments"
+    },
+    {
+      "key": "file:src/payments/payment.controller.ts",
+      "kind": "file",
+      "name": "payment.controller.ts",
+      "qualifiedName": "src/payments/payment.controller.ts",
+      "filePath": "src/payments/payment.controller.ts",
+      "parentKey": "directory:src/payments"
+    },
+    {
+      "key": "file:src/payments/payment.service.test.ts",
+      "kind": "file",
+      "name": "payment.service.test.ts",
+      "qualifiedName": "src/payments/payment.service.test.ts",
+      "filePath": "src/payments/payment.service.test.ts",
+      "parentKey": "directory:src/payments",
+      "meta": {
+        "isTest": true
+      }
+    },
+    {
+      "key": "file:src/payments/payment.service.ts",
+      "kind": "file",
+      "name": "payment.service.ts",
+      "qualifiedName": "src/payments/payment.service.ts",
+      "filePath": "src/payments/payment.service.ts",
+      "parentKey": "directory:src/payments"
+    },
+    {
+      "key": "file:src/payments/stripe.gateway.ts",
+      "kind": "file",
+      "name": "stripe.gateway.ts",
+      "qualifiedName": "src/payments/stripe.gateway.ts",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "parentKey": "directory:src/payments"
+    },
+    {
+      "key": "file:src/payments/types.ts",
+      "kind": "file",
+      "name": "types.ts",
+      "qualifiedName": "src/payments/types.ts",
+      "filePath": "src/payments/types.ts",
+      "parentKey": "directory:src/payments"
+    },
+    {
+      "key": "function:src/http/server.js#listen",
+      "kind": "function",
+      "name": "listen",
+      "qualifiedName": "listen",
+      "filePath": "src/http/server.js",
+      "startLine": 1,
+      "endLine": 3,
+      "parentKey": "file:src/http/server.js",
+      "meta": {
+        "modifiers": [
+          "export"
+        ],
+        "params": [
+          {
+            "name": "port"
+          }
+        ],
+        "returnExprs": [
+          "port"
+        ]
+      }
+    },
+    {
+      "key": "function:src/main.ts#start",
+      "kind": "function",
+      "name": "start",
+      "qualifiedName": "start",
+      "filePath": "src/main.ts",
+      "startLine": 4,
+      "endLine": 8,
+      "parentKey": "file:src/main.ts",
+      "meta": {
+        "modifiers": [
+          "export"
+        ],
+        "params": [],
+        "returnExprs": [
+          "c.create({ body: { amount: 1, currency: 'usd' } })"
+        ]
+      }
+    },
+    {
+      "key": "function:src/payments/payment.controller.ts#parseAmount",
+      "kind": "function",
+      "name": "parseAmount",
+      "qualifiedName": "parseAmount",
+      "filePath": "src/payments/payment.controller.ts",
+      "startLine": 13,
+      "endLine": 15,
+      "parentKey": "file:src/payments/payment.controller.ts",
+      "meta": {
+        "modifiers": [],
+        "params": [
+          {
+            "name": "raw",
+            "type": "unknown"
+          }
+        ],
+        "returnExprs": [
+          "Number(raw)"
+        ],
+        "returns": "number"
+      }
+    },
+    {
+      "key": "function:src/payments/stripe.gateway.ts#toCents",
+      "kind": "function",
+      "name": "toCents",
+      "qualifiedName": "toCents",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "startLine": 18,
+      "endLine": 18,
+      "parentKey": "file:src/payments/stripe.gateway.ts",
+      "meta": {
+        "modifiers": [
+          "export"
+        ],
+        "params": [
+          {
+            "name": "amount",
+            "type": "number"
+          },
+          {
+            "name": "rate",
+            "optional": true,
+            "type": "number"
+          }
+        ],
+        "returnExprs": [
+          "Math.round(amount * (rate ?? 100))"
+        ],
+        "returns": "number"
+      }
+    },
+    {
+      "key": "interface:src/payments/stripe.gateway.ts#ChargeRequest",
+      "kind": "interface",
+      "name": "ChargeRequest",
+      "qualifiedName": "ChargeRequest",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "startLine": 4,
+      "endLine": 7,
+      "parentKey": "file:src/payments/stripe.gateway.ts"
+    },
+    {
+      "key": "interface:src/payments/types.ts#PaymentProcessor",
+      "kind": "interface",
+      "name": "PaymentProcessor",
+      "qualifiedName": "PaymentProcessor",
+      "filePath": "src/payments/types.ts",
+      "startLine": 1,
+      "endLine": 3,
+      "parentKey": "file:src/payments/types.ts"
+    },
+    {
+      "key": "method:src/lib/base-gateway.ts#BaseGateway.log",
+      "kind": "method",
+      "name": "log",
+      "qualifiedName": "BaseGateway.log",
+      "filePath": "src/lib/base-gateway.ts",
+      "startLine": 2,
+      "endLine": 4,
+      "parentKey": "class:src/lib/base-gateway.ts#BaseGateway",
+      "meta": {
+        "modifiers": [
+          "protected"
+        ],
+        "params": [
+          {
+            "name": "msg",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "key": "method:src/payments/payment.controller.ts#PaymentController.constructor",
+      "kind": "method",
+      "name": "constructor",
+      "qualifiedName": "PaymentController.constructor",
+      "filePath": "src/payments/payment.controller.ts",
+      "startLine": 5,
+      "endLine": 5,
+      "parentKey": "class:src/payments/payment.controller.ts#PaymentController",
+      "meta": {
+        "modifiers": [],
+        "params": [
+          {
+            "name": "payments",
+            "property": "private",
+            "type": "PaymentService"
+          }
+        ]
+      }
+    },
+    {
+      "key": "method:src/payments/payment.controller.ts#PaymentController.create",
+      "kind": "method",
+      "name": "create",
+      "qualifiedName": "PaymentController.create",
+      "filePath": "src/payments/payment.controller.ts",
+      "startLine": 7,
+      "endLine": 10,
+      "parentKey": "class:src/payments/payment.controller.ts#PaymentController",
+      "meta": {
+        "modifiers": [
+          "async"
+        ],
+        "params": [
+          {
+            "name": "req",
+            "type": "Request"
+          }
+        ],
+        "returnExprs": [
+          "this.payments.charge(amount, req.body.currency)"
+        ]
+      }
+    },
+    {
+      "key": "method:src/payments/payment.service.ts#PaymentService.charge",
+      "kind": "method",
+      "name": "charge",
+      "qualifiedName": "PaymentService.charge",
+      "filePath": "src/payments/payment.service.ts",
+      "startLine": 15,
+      "endLine": 18,
+      "parentKey": "class:src/payments/payment.service.ts#PaymentService",
+      "meta": {
+        "doc": "Charges the customer.\nAmounts are in minor units.",
+        "modifiers": [
+          "async"
+        ],
+        "params": [
+          {
+            "doc": "Amount to charge, in cents.",
+            "name": "amount",
+            "type": "number"
+          },
+          {
+            "default": "'usd'",
+            "doc": "ISO currency code",
+            "name": "currency",
+            "type": "string"
+          },
+          {
+            "name": "tags",
+            "rest": true,
+            "type": "string[]"
+          }
+        ],
+        "returnExprs": [
+          "this.gateway.createCharge({ amount, currency })"
+        ],
+        "returns": "Promise\u003cunknown\u003e",
+        "returnsDoc": "The gateway's charge record."
+      }
+    },
+    {
+      "key": "method:src/payments/payment.service.ts#PaymentService.validate",
+      "kind": "method",
+      "name": "validate",
+      "qualifiedName": "PaymentService.validate",
+      "filePath": "src/payments/payment.service.ts",
+      "startLine": 20,
+      "endLine": 22,
+      "parentKey": "class:src/payments/payment.service.ts#PaymentService",
+      "meta": {
+        "modifiers": [
+          "private"
+        ],
+        "params": [
+          {
+            "name": "amount",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "key": "method:src/payments/stripe.gateway.ts#StripeGateway.createCharge",
+      "kind": "method",
+      "name": "createCharge",
+      "qualifiedName": "StripeGateway.createCharge",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "startLine": 12,
+      "endLine": 15,
+      "parentKey": "class:src/payments/stripe.gateway.ts#StripeGateway",
+      "meta": {
+        "modifiers": [
+          "async"
+        ],
+        "params": [
+          {
+            "name": "req",
+            "type": "ChargeRequest"
+          }
+        ],
+        "returnExprs": [
+          "this.client.charges.create(req)"
+        ]
+      }
+    },
+    {
+      "key": "module:stripe",
+      "kind": "module",
+      "name": "stripe",
+      "qualifiedName": "stripe",
+      "parentKey": "repository:",
+      "meta": {
+        "external": true
+      }
+    },
+    {
+      "key": "module:vitest",
+      "kind": "module",
+      "name": "vitest",
+      "qualifiedName": "vitest",
+      "parentKey": "repository:",
+      "meta": {
+        "external": true
+      }
+    },
+    {
+      "key": "repository:",
+      "kind": "repository",
+      "name": "sample-ts",
+      "qualifiedName": "sample-ts"
+    },
+    {
+      "key": "type:src/http/types.ts#Request",
+      "kind": "type",
+      "name": "Request",
+      "qualifiedName": "Request",
+      "filePath": "src/http/types.ts",
+      "startLine": 1,
+      "endLine": 1,
+      "parentKey": "file:src/http/types.ts"
+    }
+  ],
+  "Edges": [
+    {
+      "source": "function:src/main.ts#start",
+      "target": "class:src/payments/payment.controller.ts#PaymentController",
+      "kind": "calls",
+      "filePath": "src/main.ts",
+      "line": 5
+    },
+    {
+      "source": "function:src/main.ts#start",
+      "target": "class:src/payments/payment.service.ts#PaymentService",
+      "kind": "calls",
+      "filePath": "src/main.ts",
+      "line": 5
+    },
+    {
+      "source": "function:src/main.ts#start",
+      "target": "function:src/http/server.js#listen",
+      "kind": "calls",
+      "filePath": "src/main.ts",
+      "line": 6
+    },
+    {
+      "source": "method:src/payments/payment.controller.ts#PaymentController.create",
+      "target": "function:src/payments/payment.controller.ts#parseAmount",
+      "kind": "calls",
+      "filePath": "src/payments/payment.controller.ts",
+      "line": 8
+    },
+    {
+      "source": "method:src/payments/payment.controller.ts#PaymentController.create",
+      "target": "method:src/payments/payment.service.ts#PaymentService.charge",
+      "kind": "calls",
+      "filePath": "src/payments/payment.controller.ts",
+      "line": 9
+    },
+    {
+      "source": "method:src/payments/payment.service.ts#PaymentService.charge",
+      "target": "method:src/payments/payment.service.ts#PaymentService.validate",
+      "kind": "calls",
+      "filePath": "src/payments/payment.service.ts",
+      "line": 16
+    },
+    {
+      "source": "method:src/payments/payment.service.ts#PaymentService.charge",
+      "target": "method:src/payments/stripe.gateway.ts#StripeGateway.createCharge",
+      "kind": "calls",
+      "filePath": "src/payments/payment.service.ts",
+      "line": 17
+    },
+    {
+      "source": "method:src/payments/stripe.gateway.ts#StripeGateway.createCharge",
+      "target": "method:src/lib/base-gateway.ts#BaseGateway.log",
+      "kind": "calls",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "line": 13
+    },
+    {
+      "source": "class:src/lib/base-gateway.ts#BaseGateway",
+      "target": "method:src/lib/base-gateway.ts#BaseGateway.log",
+      "kind": "contains"
+    },
+    {
+      "source": "class:src/payments/payment.controller.ts#PaymentController",
+      "target": "method:src/payments/payment.controller.ts#PaymentController.constructor",
+      "kind": "contains"
+    },
+    {
+      "source": "class:src/payments/payment.controller.ts#PaymentController",
+      "target": "method:src/payments/payment.controller.ts#PaymentController.create",
+      "kind": "contains"
+    },
+    {
+      "source": "class:src/payments/payment.service.ts#PaymentService",
+      "target": "method:src/payments/payment.service.ts#PaymentService.charge",
+      "kind": "contains"
+    },
+    {
+      "source": "class:src/payments/payment.service.ts#PaymentService",
+      "target": "method:src/payments/payment.service.ts#PaymentService.validate",
+      "kind": "contains"
+    },
+    {
+      "source": "class:src/payments/stripe.gateway.ts#StripeGateway",
+      "target": "method:src/payments/stripe.gateway.ts#StripeGateway.createCharge",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src",
+      "target": "directory:src/http",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src",
+      "target": "directory:src/lib",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src",
+      "target": "directory:src/payments",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src",
+      "target": "file:src/main.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/http",
+      "target": "file:src/http/server.js",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/http",
+      "target": "file:src/http/types.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/lib",
+      "target": "file:src/lib/base-gateway.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/payments",
+      "target": "file:src/payments/index.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/payments",
+      "target": "file:src/payments/payment.controller.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/payments",
+      "target": "file:src/payments/payment.service.test.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/payments",
+      "target": "file:src/payments/payment.service.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/payments",
+      "target": "file:src/payments/stripe.gateway.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "directory:src/payments",
+      "target": "file:src/payments/types.ts",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/http/server.js",
+      "target": "function:src/http/server.js#listen",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/http/types.ts",
+      "target": "type:src/http/types.ts#Request",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/lib/base-gateway.ts",
+      "target": "class:src/lib/base-gateway.ts#BaseGateway",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/main.ts",
+      "target": "function:src/main.ts#start",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/payments/payment.controller.ts",
+      "target": "class:src/payments/payment.controller.ts#PaymentController",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/payments/payment.controller.ts",
+      "target": "function:src/payments/payment.controller.ts#parseAmount",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/payments/payment.service.ts",
+      "target": "class:src/payments/payment.service.ts#PaymentService",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "class:src/payments/stripe.gateway.ts#StripeGateway",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "function:src/payments/stripe.gateway.ts#toCents",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "interface:src/payments/stripe.gateway.ts#ChargeRequest",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/payments/types.ts",
+      "target": "interface:src/payments/types.ts#PaymentProcessor",
+      "kind": "contains"
+    },
+    {
+      "source": "repository:",
+      "target": "directory:src",
+      "kind": "contains"
+    },
+    {
+      "source": "repository:",
+      "target": "module:stripe",
+      "kind": "contains"
+    },
+    {
+      "source": "repository:",
+      "target": "module:vitest",
+      "kind": "contains"
+    },
+    {
+      "source": "file:src/http/server.js",
+      "target": "function:src/http/server.js#listen",
+      "kind": "exports",
+      "filePath": "src/http/server.js",
+      "line": 1
+    },
+    {
+      "source": "file:src/http/types.ts",
+      "target": "type:src/http/types.ts#Request",
+      "kind": "exports",
+      "filePath": "src/http/types.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/lib/base-gateway.ts",
+      "target": "class:src/lib/base-gateway.ts#BaseGateway",
+      "kind": "exports",
+      "filePath": "src/lib/base-gateway.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/main.ts",
+      "target": "function:src/main.ts#start",
+      "kind": "exports",
+      "filePath": "src/main.ts",
+      "line": 4
+    },
+    {
+      "source": "file:src/payments/payment.controller.ts",
+      "target": "class:src/payments/payment.controller.ts#PaymentController",
+      "kind": "exports",
+      "filePath": "src/payments/payment.controller.ts",
+      "line": 4
+    },
+    {
+      "source": "file:src/payments/payment.service.ts",
+      "target": "class:src/payments/payment.service.ts#PaymentService",
+      "kind": "exports",
+      "filePath": "src/payments/payment.service.ts",
+      "line": 4
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "class:src/payments/stripe.gateway.ts#StripeGateway",
+      "kind": "exports",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "line": 9
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "function:src/payments/stripe.gateway.ts#toCents",
+      "kind": "exports",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "line": 18
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "interface:src/payments/stripe.gateway.ts#ChargeRequest",
+      "kind": "exports",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "line": 4
+    },
+    {
+      "source": "file:src/payments/types.ts",
+      "target": "interface:src/payments/types.ts#PaymentProcessor",
+      "kind": "exports",
+      "filePath": "src/payments/types.ts",
+      "line": 1
+    },
+    {
+      "source": "class:src/payments/stripe.gateway.ts#StripeGateway",
+      "target": "class:src/lib/base-gateway.ts#BaseGateway",
+      "kind": "extends",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "line": 9
+    },
+    {
+      "source": "class:src/payments/payment.service.ts#PaymentService",
+      "target": "interface:src/payments/types.ts#PaymentProcessor",
+      "kind": "implements",
+      "filePath": "src/payments/payment.service.ts",
+      "line": 4
+    },
+    {
+      "source": "file:src/main.ts",
+      "target": "file:src/http/server.js",
+      "kind": "imports",
+      "filePath": "src/main.ts",
+      "line": 2
+    },
+    {
+      "source": "file:src/main.ts",
+      "target": "file:src/payments/index.ts",
+      "kind": "imports",
+      "filePath": "src/main.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/payments/index.ts",
+      "target": "file:src/payments/payment.controller.ts",
+      "kind": "imports",
+      "filePath": "src/payments/index.ts",
+      "line": 2
+    },
+    {
+      "source": "file:src/payments/index.ts",
+      "target": "file:src/payments/payment.service.ts",
+      "kind": "imports",
+      "filePath": "src/payments/index.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/payments/payment.controller.ts",
+      "target": "file:src/http/types.ts",
+      "kind": "imports",
+      "filePath": "src/payments/payment.controller.ts",
+      "line": 2
+    },
+    {
+      "source": "file:src/payments/payment.controller.ts",
+      "target": "file:src/payments/payment.service.ts",
+      "kind": "imports",
+      "filePath": "src/payments/payment.controller.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/payments/payment.service.test.ts",
+      "target": "file:src/payments/payment.service.ts",
+      "kind": "imports",
+      "filePath": "src/payments/payment.service.test.ts",
+      "line": 2
+    },
+    {
+      "source": "file:src/payments/payment.service.test.ts",
+      "target": "module:vitest",
+      "kind": "imports",
+      "filePath": "src/payments/payment.service.test.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/payments/payment.service.ts",
+      "target": "file:src/payments/stripe.gateway.ts",
+      "kind": "imports",
+      "filePath": "src/payments/payment.service.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/payments/payment.service.ts",
+      "target": "file:src/payments/types.ts",
+      "kind": "imports",
+      "filePath": "src/payments/payment.service.ts",
+      "line": 2
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "file:src/lib/base-gateway.ts",
+      "kind": "imports",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "line": 2
+    },
+    {
+      "source": "file:src/payments/stripe.gateway.ts",
+      "target": "module:stripe",
+      "kind": "imports",
+      "filePath": "src/payments/stripe.gateway.ts",
+      "line": 1
+    },
+    {
+      "source": "file:src/payments/payment.service.test.ts",
+      "target": "file:src/payments/payment.service.ts",
+      "kind": "tests",
+      "filePath": "src/payments/payment.service.test.ts",
+      "line": 2
+    }
+  ]
+}
