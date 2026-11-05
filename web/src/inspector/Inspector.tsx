@@ -2,7 +2,6 @@ import { Link } from "react-router";
 import { useQuery } from "urql";
 import { FUNCTION_KINDS, readSignature } from "../canvas/signature";
 import type { GEdge } from "../canvas/types";
-import { EXPANDABLE } from "../canvas/types";
 import { NodeQuery } from "../lib/queries";
 import { OPEN, StatusPill } from "../lib/status";
 import { FunctionCode, FunctionDescription, FunctionInputs, FunctionResult } from "./FunctionSections";
@@ -11,8 +10,6 @@ interface Props {
   snapshotId: string;
   nodeKey: string | null;
   changeSets: { id: string; status: string; requestText: string; selectedKeys: string[] }[];
-  expanded: boolean;
-  onExpand: (key: string) => void;
   onReveal: (key: string) => void;
 }
 
@@ -49,13 +46,13 @@ function EdgeGroup({ title, edges, other, onReveal }: { title: string; edges: GE
   );
 }
 
-export function Inspector({ snapshotId, nodeKey, changeSets, expanded, onExpand, onReveal }: Props) {
+export function Inspector({ snapshotId, nodeKey, changeSets, onReveal }: Props) {
   const [{ data, fetching, error }] = useQuery({ query: NodeQuery, variables: { snapshotId, key: nodeKey ?? "" }, pause: !nodeKey });
   if (!nodeKey) {
     return (
       <div className="section muted">
-        <p style={{ marginTop: 0 }}>Click a component to inspect it. Double-click files and classes to expand them.</p>
-        <p>Shift-click or drag a box to select several, then describe a change in the panel below the canvas.</p>
+        <p style={{ marginTop: 0 }}>Click a function to inspect it. Each box is a file; click its header to inspect the file.</p>
+        <p>Shift-click, or drag a rectangle anywhere on the canvas, to select several. Then describe a change in the panel below the canvas.</p>
       </div>
     );
   }
@@ -84,11 +81,6 @@ export function Inspector({ snapshotId, nodeKey, changeSets, expanded, onExpand,
             {n.startLine > 0 && (<><dt>lines</dt><dd className="mono">{n.startLine}–{n.endLine}</dd></>)}
             <dt>key</dt><dd className="mono faint" style={{ fontSize: 11 }}>{n.key}</dd>
           </dl>
-          {EXPANDABLE.has(n.kind) && (
-            <div className="row" style={{ marginTop: 10 }}>
-              <button onClick={() => onExpand(n.key)}>{expanded ? "Collapse" : "Expand"}</button>
-            </div>
-          )}
         </div>
       )}
       {related.length > 0 && (

@@ -4,29 +4,35 @@ import type { GNode } from "./types";
 
 export type GData = {
   node: GNode;
-  expanded: boolean;
-  expandable: boolean;
   /** Number of open change sets that target this component. */
   proposals: number;
   dim: boolean;
 };
 export type GFlowNode = Node<GData, "g">;
 
+export type FileData = {
+  node: GNode;
+  /** Functions of this file on the canvas. */
+  count: number;
+  proposals: number;
+  dim: boolean;
+};
+export type FileFlowNode = Node<FileData, "file">;
+
+export type CanvasNode = GFlowNode | FileFlowNode;
+
 function GraphNodeViewImpl({ data, selected }: NodeProps<GFlowNode>) {
-  const { node, expanded, expandable, proposals, dim } = data;
+  const { node, proposals, dim } = data;
   const isTest = node.meta?.isTest === true;
-  const loc = node.kind === "file" || node.kind === "directory" ? node.filePath.split("/").slice(0, -1).join("/") : node.filePath;
   const cls = ["gnode", selected && "selected", proposals > 0 && "proposed", dim && "dim", isTest && "test"].filter(Boolean).join(" ");
   return (
-    <div className={cls} style={{ "--kind": `var(--k-${node.kind}, var(--line-strong))` } as React.CSSProperties} title={node.qualifiedName}>
+    <div className={cls} style={{ "--kind": `var(--k-${node.kind}, var(--line-strong))` } as React.CSSProperties} title={node.key}>
       <Handle type="target" position={Position.Left} />
       <div className="kind">{node.kind}{isTest ? " · test" : ""}</div>
       <div className="name">{node.kind === "method" ? node.qualifiedName : node.name}</div>
-      {loc && <div className="path">{loc || "/"}</div>}
-      {(expandable || proposals > 0) && (
+      {proposals > 0 && (
         <div className="foot">
-          {expandable && <span className="faint mono" style={{ fontSize: 10 }}>{expanded ? "▾ expanded" : "▸ double-click to expand"}</span>}
-          {proposals > 0 && <span className="pill accent" title="Open change sets target this component">{proposals} proposed</span>}
+          <span className="pill accent" title="Open change sets target this component">{proposals} proposed</span>
         </div>
       )}
       <Handle type="source" position={Position.Right} />
@@ -34,5 +40,24 @@ function GraphNodeViewImpl({ data, selected }: NodeProps<GFlowNode>) {
   );
 }
 
+/** A file, drawn as a box around its functions. */
+function FileGroupViewImpl({ data, selected }: NodeProps<FileFlowNode>) {
+  const { node, count, proposals, dim } = data;
+  const slash = node.filePath.lastIndexOf("/");
+  const dir = slash >= 0 ? node.filePath.slice(0, slash + 1) : "";
+  const base = node.filePath.slice(slash + 1);
+  const cls = ["fgroup", selected && "selected", proposals > 0 && "proposed", dim && "dim"].filter(Boolean).join(" ");
+  return (
+    <div className={cls} title={node.filePath}>
+      <div className="head">
+        <span className="path"><span className="dir">{dir}</span><span className="base">{base}</span></span>
+        <span className="faint">{count} fn</span>
+        {proposals > 0 && <span className="pill accent" title="Open change sets target this file">{proposals} proposed</span>}
+      </div>
+    </div>
+  );
+}
+
 export const GraphNodeView = memo(GraphNodeViewImpl);
-export const nodeTypes = { g: GraphNodeView };
+export const FileGroupView = memo(FileGroupViewImpl);
+export const nodeTypes = { g: GraphNodeView, file: FileGroupView };

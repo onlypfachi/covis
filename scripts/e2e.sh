@@ -9,7 +9,7 @@ REDIS=covis-e2e-redis-$$
 DB=covis_e2e_$$
 PG="docker compose -f $ROOT/docker-compose.yml exec -T postgres psql -U covis -q"
 
-export DATABASE_URL="postgres://covis:covis@localhost:5435/$DB?sslmode=disable"
+export DATABASE_URL="postgres://covis:covis@localhost:5434/$DB?sslmode=disable"
 export REDIS_ADDR=localhost:6391
 export API_ADDR=:8797 API_URL=http://localhost:8797
 export AGENT_WORKER_PORT=8799 AGENT_WORKER_URL=http://localhost:8799

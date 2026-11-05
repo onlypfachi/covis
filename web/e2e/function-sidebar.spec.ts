@@ -6,12 +6,11 @@ test("selecting a function shows description, inputs, the function and its resul
   await page.getByLabel("Connect a GitHub repository").fill(createFixtureRepo());
   await page.getByRole("button", { name: "Connect" }).click();
   const canvas = page.getByLabel("Architecture canvas");
-  const fit = () => page.getByRole("button", { name: "Fit", exact: true }).click();
 
-  await canvas.locator(".gnode", { hasText: "payment.service.ts" }).first().dblclick({ timeout: 45_000 });
-  await fit();
-  await canvas.locator(".gnode", { hasText: "PaymentService" }).filter({ hasText: "class" }).dblclick();
-  await fit();
+  // The canvas shows functions only, each inside a box for its file.
+  const serviceFile = canvas.locator(".fgroup", { hasText: "payment.service.ts" });
+  await expect(serviceFile).toBeVisible({ timeout: 45_000 });
+  await expect(canvas.locator(".gnode").filter({ hasText: /^(file|class)/ })).toHaveCount(0);
   await canvas.locator(".gnode", { hasText: "PaymentService.charge" }).click();
 
   const sidebar = page.locator(".inspector");
@@ -58,8 +57,8 @@ test("selecting a function shows description, inputs, the function and its resul
   // No popup on the canvas any more.
   await expect(page.getByRole("dialog")).toHaveCount(0);
 
-  // Non-function components keep the plain source view.
-  await canvas.locator(".gnode", { hasText: "PaymentService" }).filter({ hasText: "class" }).click();
+  // Files keep the plain source view.
+  await serviceFile.locator(".head").click();
   await expect(sidebar.getByText("Source at this commit")).toBeVisible();
   await expect(sidebar.getByLabel("Inputs")).toHaveCount(0);
 });

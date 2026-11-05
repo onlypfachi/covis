@@ -31,6 +31,6 @@
 
 - `backend/`: Go. gqlgen API (`cmd/api`), Asynq worker (`cmd/worker`), domain code in `internal/`.
 - `agent-worker/`: Node/TS HTTP service that streams NDJSON agent events.
-- `web/`: React + Vite + React Router + React Flow. Typed GraphQL documents via `pnpm codegen`.
+- `web/`: React + Vite + React Router + React Flow. Typed GraphQL documents via `pnpm codegen`. Lint with `pnpm lint`. typescript-eslint can't load TypeScript 7, so the `typescript` package is aliased to `@typescript/typescript6` (the API that tooling uses) and `@typescript/native` provides `tsc` 7 for `pnpm typecheck`/`build`. Keep both aliases when upgrading.
 
 After changing `backend/graph/schema.graphqls`, run `make gen`. Put resolver helpers in `graph/helpers.go`, not in the generated resolver file.

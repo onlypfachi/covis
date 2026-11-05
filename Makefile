@@ -9,9 +9,9 @@ endif
 # One absolute data dir shared by the Go worker and the agent-worker:
 # the worker creates worktrees there and the agent may only edit inside them.
 export DATA_DIR := $(abspath $(or $(DATA_DIR),data))
-export DATABASE_URL ?= postgres://covis:covis@localhost:5435/covis?sslmode=disable
-export REDIS_ADDR ?= localhost:6381
-TEST_DATABASE_URL ?= postgres://covis:covis@localhost:5435/covis_test?sslmode=disable
+export DATABASE_URL ?= postgres://covis:covis@localhost:5434/covis?sslmode=disable
+export REDIS_ADDR ?= localhost:6380
+TEST_DATABASE_URL ?= postgres://covis:covis@localhost:5434/covis_test?sslmode=disable
 
 .PHONY: up down dev api worker agent web gen test test-go test-agent e2e install check-ports
 

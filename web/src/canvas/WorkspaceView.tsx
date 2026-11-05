@@ -17,23 +17,26 @@ import type { RepositoryQuery as RepositoryQueryResult } from "../gql/graphql";
 import { Inspector } from "../inspector/Inspector";
 import { ClearLayoutMutation, SaveLayoutMutation } from "../lib/queries";
 import { OPEN } from "../lib/status";
-import { nodeTypes, type GFlowNode } from "./GraphNodeView";
-import { besideParent, layout } from "./layout";
+import { nodeTypes, type CanvasNode } from "./GraphNodeView";
+import { layout } from "./layout";
 import { Sidebar } from "./Sidebar";
-import { EDGE_KINDS, EDGE_STYLE, EXPANDABLE, type EdgeKind, type GNode, type XY } from "./types";
+import { EDGE_KINDS, EDGE_STYLE, FN_GAP, GROUP_HEAD, GROUP_PAD, NODE_H, NODE_W, fileKey, fileNode, type EdgeKind, type GNode, type XY } from "./types";
 import { useGraph } from "./useGraph";
 
 type Repo = NonNullable<RepositoryQueryResult["repository"]>;
 
+/** A file box takes clicks and drags on its header only; its body lets them
+ * through to the pane, so a selection rectangle can start anywhere. */
+const GROUP_STYLE = { pointerEvents: "none" } as const;
+
 export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; snapshotId: string; onReindex: () => void }) {
   const graph = useGraph(snapshotId);
   const flow = useReactFlow();
-  const [rfNodes, setRfNodes, onNodesChange] = useNodesState<GFlowNode>([]);
+  const [rfNodes, setRfNodes, onNodesChange] = useNodesState<CanvasNode>([]);
   const [, saveLayout] = useMutation(SaveLayoutMutation);
   const [, clearLayout] = useMutation(ClearLayoutMutation);
 
-  const [edgeKinds, setEdgeKinds] = useState<Set<EdgeKind>>(new Set(["imports", "calls", "extends", "implements"]));
-  const [showModules, setShowModules] = useState(false);
+  const [edgeKinds, setEdgeKinds] = useState<Set<EdgeKind>>(new Set(["calls"]));
   const [focusNeighbours, setFocusNeighbours] = useState(false);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -50,7 +53,11 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
   // Positions the user placed by hand are pinned and persisted. Everything else
   // is laid out automatically whenever the visible graph changes shape.
   const pinned = useRef(new Map(repo.layout.map((p) => [p.key, { x: p.x, y: p.y }])));
+  // File groups and functions inside them use React Flow's sub-flows: a group's
+  // position is absolute, a function's is relative to its group.
   const hints = useRef(new Map<string, XY>());
+  const sizes = useRef(new Map<string, { width: number; height: number }>());
+  const canvasRef = useRef<HTMLElement>(null);
   const [layoutNonce, setLayoutNonce] = useState(0);
   const requestLayout = useCallback(() => setLayoutNonce((n) => n + 1), []);
 
@@ -61,10 +68,10 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
     return m;
   }, [repo.changeSets]);
 
-  // Initial view: files and their import graph.
+  // Initial view: every function, grouped by file.
   useEffect(() => {
     let cancelled = false;
-    graph.loadInitial(["file"]).then(() => {
+    graph.loadInitial().then(() => {
       if (cancelled) return;
       setLoading(false);
       requestLayout();
@@ -77,20 +84,29 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
 
   useEffect(() => {
     if (!layoutNonce) return;
-    let cancelled = false;
-    const nodes = [...graph.nodes.values()];
-    const visible = new Set(nodes.map((n) => n.key));
-    const edges = [...graph.edges.values()].filter((e) => edgeKinds.has(e.kind as EdgeKind) && visible.has(e.sourceKey) && visible.has(e.targetKey));
-    layout(nodes, edges).then((pos) => {
-      if (cancelled) return;
-      for (const [k, p] of Object.entries(pos)) if (!pinned.current.has(k)) hints.current.set(k, p);
-      setRfNodes((prev) => prev.map((n) => (pinned.current.has(n.id) || !pos[n.id] ? n : { ...n, position: pos[n.id] })));
-      requestFit();
-    });
-    return () => {
-      cancelled = true;
-    };
-    // Only re-layout when asked, not on every edge-filter toggle.
+    // Stack the files to fill the canvas's shape.
+    const box = canvasRef.current?.getBoundingClientRect();
+    const aspect = box && box.height > 0 ? box.width / box.height : undefined;
+    const { positions, sizes: sz } = layout([...graph.nodes.values()], aspect);
+    // A function's position is relative to its file box. Pins saved before
+    // functions were grouped by file are absolute, so drop any that fall
+    // outside the box and let the layout place the function instead.
+    for (const n of graph.nodes.values()) {
+      const p = pinned.current.get(n.key);
+      const box = sz[fileKey(n.filePath)];
+      if (p && box && (p.x < 0 || p.y < 0 || p.x + NODE_W > box.width || p.y + NODE_H > box.height)) pinned.current.delete(n.key);
+    }
+    for (const [k, p] of Object.entries(positions)) if (!pinned.current.has(k)) hints.current.set(k, p);
+    for (const [k, s] of Object.entries(sz)) sizes.current.set(k, s);
+    setRfNodes((prev) =>
+      prev.map((n) => {
+        const size = sz[n.id];
+        const next = size ? { ...n, style: { ...n.style, ...size } } : n;
+        return pinned.current.has(n.id) || !positions[n.id] ? next : { ...next, position: positions[n.id] };
+      }),
+    );
+    requestFit();
+    // Only re-layout when asked.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layoutNonce]);
 
@@ -102,28 +118,46 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
       if (e.sourceKey === focusKey) s.add(e.targetKey);
       if (e.targetKey === focusKey) s.add(e.sourceKey);
     }
-    for (const n of graph.nodes.values()) if (n.parentKey === focusKey || n.key === graph.nodes.get(focusKey)?.parentKey) s.add(n.key);
     return s;
-  }, [focusKey, focusNeighbours, graph.edges, graph.nodes]);
+  }, [focusKey, focusNeighbours, graph.edges]);
 
   // Sync the semantic graph into React Flow nodes, keeping positions the user set.
+  // Groups come first: React Flow needs a parent before its children.
   useEffect(() => {
     setRfNodes((prev) => {
       const prevMap = new Map(prev.map((n) => [n.id, n]));
-      return [...graph.nodes.values()].map((n): GFlowNode => {
+      const byFile = new Map<string, GNode[]>();
+      for (const n of graph.nodes.values()) {
+        const k = fileKey(n.filePath);
+        byFile.set(k, [...(byFile.get(k) ?? []), n]);
+      }
+      const place = (key: string, fallback: XY) => pinned.current.get(key) ?? hints.current.get(key) ?? fallback;
+      const out: CanvasNode[] = [];
+      for (const [key, fns] of byFile) {
         const data = {
-          node: n,
-          expanded: graph.expanded.has(n.key),
-          expandable: EXPANDABLE.has(n.kind),
-          proposals: proposals.get(n.key) ?? 0,
-          dim: neighbours ? !neighbours.has(n.key) : false,
+          node: fileNode(fns[0].filePath),
+          count: fns.length,
+          proposals: proposals.get(key) ?? 0,
+          dim: neighbours ? !fns.some((f) => neighbours.has(f.key)) : false,
         };
-        const p = prevMap.get(n.key);
-        if (p) return { ...p, data };
-        return { id: n.key, type: "g", position: pinned.current.get(n.key) ?? hints.current.get(n.key) ?? { x: 0, y: 0 }, data };
-      });
+        const size = sizes.current.get(key) ?? { width: NODE_W + 2 * GROUP_PAD, height: GROUP_HEAD + fns.length * (NODE_H + FN_GAP) + GROUP_PAD };
+        const p = prevMap.get(key);
+        out.push(p ? { ...p, type: "file", data } as CanvasNode : { id: key, type: "file", position: place(key, { x: 0, y: 0 }), style: { ...size, ...GROUP_STYLE }, dragHandle: ".head", data });
+      }
+      for (const [key, fns] of byFile) {
+        fns.forEach((n, i) => {
+          const data = { node: n, proposals: proposals.get(n.key) ?? 0, dim: neighbours ? !neighbours.has(n.key) : false };
+          const p = prevMap.get(n.key);
+          out.push(
+            p
+              ? ({ ...p, type: "g", data } as CanvasNode)
+              : { id: n.key, type: "g", parentId: key, extent: "parent", position: place(n.key, { x: GROUP_PAD, y: GROUP_HEAD + i * (NODE_H + FN_GAP) }), data },
+          );
+        });
+      }
+      return out;
     });
-  }, [graph.nodes, graph.expanded, proposals, neighbours, setRfNodes]);
+  }, [graph.nodes, proposals, neighbours, setRfNodes]);
 
   const rfEdges = useMemo<Edge[]>(() => {
     const visible = new Set(graph.nodes.keys());
@@ -138,66 +172,47 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
         target: e.targetKey,
         style: { stroke: st.stroke, strokeWidth: e.kind === "calls" ? 1.6 : 1.2, strokeDasharray: e.inferred ? "3 3" : st.dash, opacity: dim ? 0.15 : 1 },
         markerEnd: { type: MarkerType.ArrowClosed, color: st.stroke, width: 14, height: 14 },
+        // Above the file group boxes.
+        zIndex: 1,
         label: e.inferred ? "inferred" : undefined,
         labelStyle: { fontSize: 9, fill: "var(--ink-3)" },
         labelBgStyle: { fill: "var(--bg)" },
       });
     }
-    for (const n of graph.nodes.values()) {
-      if (visible.has(n.parentKey)) {
-        out.push({ id: `c:${n.key}`, source: n.parentKey, target: n.key, style: { stroke: EDGE_STYLE.contains.stroke, strokeWidth: 1 }, type: "smoothstep" });
-      }
-    }
     return out;
   }, [graph.edges, graph.nodes, edgeKinds, neighbours]);
 
-  const positionOf = useCallback((key: string) => flow.getNode(key)?.position ?? pinned.current.get(key), [flow]);
-
-  const expandOrCollapse = useCallback(
-    async (key: string) => {
-      if (graph.expanded.has(key)) {
-        graph.collapse(key);
-        return requestLayout();
-      }
-      const added = await graph.expand(key);
-      // Start children beside the parent, then let the layout settle them.
-      const origin = positionOf(key) ?? { x: 0, y: 0 };
-      added.forEach((n, i) => hints.current.set(n.key, besideParent(origin, i)));
-      requestLayout();
-    },
-    [graph, positionOf, requestLayout],
-  );
-
-  /** Bring a node onto the canvas (loading it if needed), select and centre it. */
+  /** Bring a function onto the canvas (loading it if needed), select and centre it.
+   * Other components (files, classes) only open in the inspector, unless the
+   * key is a file already drawn as a group. */
   const reveal = useCallback(
-    async (key: string, near?: string) => {
-      const origin = (near && positionOf(near)) || flow.screenToFlowPosition({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+    async (key: string) => {
       const added = await graph.reveal([key]);
-      added.forEach((n, i) => hints.current.set(n.key, { x: origin.x + 260, y: origin.y + 80 * (i + 1) }));
+      added.forEach((n) => hints.current.delete(n.key));
       if (added.length) requestLayout();
       setFocusKey(key);
+      const onCanvas = graph.nodes.has(key) || added.some((n) => n.key === key) || !!flow.getNode(key);
+      if (!onCanvas) return;
       setRfNodes((prev) => prev.map((n) => ({ ...n, selected: n.id === key })));
       setTimeout(() => {
-        const p = flow.getNode(key)?.position;
-        if (p) flow.setCenter(p.x + 100, p.y + 30, { zoom: Math.max(flow.getZoom(), 0.9), duration: 300 });
-      }, 50);
+        const n = flow.getInternalNode(key);
+        if (!n) return;
+        const p = n.internals.positionAbsolute;
+        const w = n.measured.width ?? NODE_W;
+        const h = n.measured.height ?? NODE_H;
+        flow.setCenter(p.x + w / 2, p.y + h / 2, { zoom: Math.max(flow.getZoom(), 0.9), duration: 300 });
+      }, 300);
     },
-    [graph, flow, positionOf, requestLayout, setRfNodes],
+    [graph, flow, requestLayout, setRfNodes],
   );
 
-  const onNodeClick: NodeMouseHandler<GFlowNode> = useCallback((_, node) => setFocusKey(node.id), []);
-  const onNodeDoubleClick: NodeMouseHandler<GFlowNode> = useCallback(
-    (_, node) => {
-      if (EXPANDABLE.has(node.data.node.kind)) void expandOrCollapse(node.id);
-    },
-    [expandOrCollapse],
-  );
-  const onSelectionChange: OnSelectionChangeFunc<GFlowNode> = useCallback(({ nodes }) => {
+  const onNodeClick: NodeMouseHandler<CanvasNode> = useCallback((_, node) => setFocusKey(node.id), []);
+  const onSelectionChange: OnSelectionChangeFunc<CanvasNode> = useCallback(({ nodes }) => {
     setSelectedKeys(nodes.map((n) => n.id));
   }, []);
 
   const onNodeDragStop = useCallback(
-    (_: unknown, __: GFlowNode, nodes: GFlowNode[]) => {
+    (_: unknown, __: CanvasNode, nodes: CanvasNode[]) => {
       for (const n of nodes) pinned.current.set(n.id, n.position);
       void saveLayout({ repositoryId: repo.id, positions: nodes.map((n) => ({ key: n.id, x: n.position.x, y: n.position.y })) });
     },
@@ -211,18 +226,8 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
     requestLayout();
   }, [clearLayout, repo.id, requestLayout]);
 
-  const toggleModules = useCallback(
-    async (on: boolean) => {
-      setShowModules(on);
-      if (!on) return graph.remove(["module"]);
-      await graph.loadInitial(["module"]);
-      requestLayout();
-    },
-    [graph, requestLayout],
-  );
-
   const selectedNodes = useMemo(
-    () => selectedKeys.map((k) => graph.nodes.get(k)).filter((n): n is GNode => !!n),
+    () => selectedKeys.map((k) => graph.nodes.get(k) ?? (k.startsWith("file:") ? fileNode(k.slice("file:".length)) : undefined)).filter((n): n is GNode => !!n),
     [selectedKeys, graph.nodes],
   );
 
@@ -232,10 +237,8 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
         <Sidebar
           repo={repo}
           edgeKinds={edgeKinds}
-          onToggleEdgeKind={(k) => setEdgeKinds((prev) => { const s = new Set(prev); s.has(k) ? s.delete(k) : s.add(k); return s; })}
+          onToggleEdgeKind={(k) => setEdgeKinds((prev) => { const s = new Set(prev); if (s.has(k)) s.delete(k); else s.add(k); return s; })}
           allEdgeKinds={EDGE_KINDS}
-          showModules={showModules}
-          onToggleModules={toggleModules}
           focusNeighbours={focusNeighbours}
           onToggleFocus={setFocusNeighbours}
           onSearch={graph.search}
@@ -245,22 +248,21 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
           onReindex={onReindex}
         />
       </aside>
-      <main className="canvas" aria-label="Architecture canvas">
+      <main ref={canvasRef} className="canvas" aria-label="Architecture canvas">
         {(loading || graph.error || graph.truncated) && (
           <div className="banner">
-            {loading ? "Loading graph…" : graph.error ? <span className="error">{graph.error}</span> : "Large repository: showing the first 1,500 files. Use search to find others."}
+            {loading ? "Loading graph…" : graph.error ? <span className="error">{graph.error}</span> : "Large repository: showing the first 5,000 functions. Use search to find others."}
           </div>
         )}
         {!loading && graph.nodes.size === 0 ? (
-          <div className="empty">No TypeScript or JavaScript files were found at this commit.</div>
+          <div className="empty">No TypeScript or JavaScript functions were found at this commit.</div>
         ) : (
-          <ReactFlow<GFlowNode>
+          <ReactFlow<CanvasNode>
             nodes={rfNodes}
             edges={rfEdges}
             nodeTypes={nodeTypes}
             onNodesChange={onNodesChange}
             onNodeClick={onNodeClick}
-            onNodeDoubleClick={onNodeDoubleClick}
             onNodeDragStop={onNodeDragStop}
             onSelectionChange={onSelectionChange}
             onPaneClick={() => setFocusKey(null)}
@@ -275,7 +277,7 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
           >
             <Background gap={24} size={1} color="var(--line)" />
             <Controls showInteractive={false} />
-            <MiniMap pannable zoomable nodeColor={(n) => `var(--k-${(n.data as GFlowNode["data"]).node.kind}, var(--line-strong))`} maskColor="rgb(0 0 0 / 0.06)" />
+            <MiniMap pannable zoomable nodeColor={(n) => (n.type === "file" ? "var(--line)" : `var(--k-${(n.data as CanvasNode["data"]).node.kind}, var(--line-strong))`)} maskColor="rgb(0 0 0 / 0.06)" />
           </ReactFlow>
         )}
         <div className="legend" aria-hidden>
@@ -291,9 +293,7 @@ export function WorkspaceView({ repo, snapshotId, onReindex }: { repo: Repo; sna
           snapshotId={snapshotId}
           nodeKey={focusKey}
           changeSets={repo.changeSets}
-          expanded={focusKey ? graph.expanded.has(focusKey) : false}
-          onExpand={expandOrCollapse}
-          onReveal={(k) => reveal(k, focusKey ?? undefined)}
+          onReveal={(k) => reveal(k)}
         />
       </aside>
       <section className="bottom">

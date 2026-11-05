@@ -13,8 +13,6 @@ interface Props {
   edgeKinds: Set<EdgeKind>;
   allEdgeKinds: readonly EdgeKind[];
   onToggleEdgeKind: (k: EdgeKind) => void;
-  showModules: boolean;
-  onToggleModules: (on: boolean) => void;
   focusNeighbours: boolean;
   onToggleFocus: (on: boolean) => void;
   onSearch: (text: string) => Promise<GNode[]>;
@@ -62,7 +60,7 @@ export function Sidebar(p: Props) {
 
       <div className="section">
         <h3>Find</h3>
-        <input aria-label="Search components" placeholder="Class, function, file…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input aria-label="Search functions" placeholder="Function or method…" value={q} onChange={(e) => setQ(e.target.value)} />
         {results && (
           <ul className="edge-list" style={{ marginTop: 6 }}>
             {results.length === 0 && <li className="faint">No matches</li>}
@@ -85,9 +83,6 @@ export function Sidebar(p: Props) {
           </label>
         ))}
         <label style={{ marginTop: 6 }}>
-          <input type="checkbox" checked={p.showModules} onChange={(e) => p.onToggleModules(e.target.checked)} /> external packages
-        </label>
-        <label>
           <input type="checkbox" checked={p.focusNeighbours} onChange={(e) => p.onToggleFocus(e.target.checked)} /> dim unrelated when focused
         </label>
       </div>
